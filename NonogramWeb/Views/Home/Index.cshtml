@@ -1,0 +1,17 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome To The Game Nonogram</h1>
+    <h2>Select your username:</h2>
+    <form action="/Home/AddPlayer" method="post">
+        <input type="text" name="player"/>
+        <button type="submit">Set username</button>
+        <br/>
+    </form>
+</div>
+<br>
+<div class="new-game">
+    <a href="/Nonogram" class="new-game-link"> Start new Game</a>
+</div>

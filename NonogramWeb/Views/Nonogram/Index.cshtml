@@ -1,0 +1,131 @@
+﻿@using NonogramCore.Core
+@model NonogramWeb.Models.NonogramModel
+
+@{
+    ViewData["Title"] = "Nonogram";
+}
+<h1 class="nonogram-title">Nonogram</h1>
+
+@if (Model.Field.IsSolved())
+{
+    <h2 class="solved">Congratulations...you solved the game</h2>
+    <span>
+        <img src="/images/correct.jpg" alt="Correct" class="pipes"/>
+    </span>
+    <br>
+}
+
+<a href="/Nonogram">
+    <img src="/images/reset.png" alt="Paint" class="reset-icon"/>
+</a>
+
+<table class="center-table">
+    <tr>
+        <td class="top-left-border">
+            <a href="/Nonogram/ColorTile?">
+                <img src="/images/paint.png" alt="Paint" class="tile-images"/>
+            </a>
+            <br>
+            <a href="/Nonogram/ExcludeTile?">
+                <img src="/images/exclude.png" alt="Paint" class="tile-images"/>
+            </a>
+        </td>
+        @for (var column = 0; column < Model.Field.ColumnCount; column++)
+        {
+            var coloredInCol = @Model.Field.CountInColumn(@Model.Field, column);
+            <td class="with-border-top">
+                @foreach (var consecutive in coloredInCol)
+                {
+                    if (consecutive > 0)
+                    {
+                        <div>@consecutive</div>
+                    }
+                }
+            </td>
+        }
+    </tr>
+    @for (var row = 0; row < Model.Field.RowCount; row++)
+    {
+        var coloredInRow = @Model.Field.CountInRow(@Model.Field, row);
+        <tr>
+            <td class="with-border-side">
+                @foreach (var consecutive in coloredInRow)
+                {
+                    if (consecutive > 0)
+                    {
+                        <span class="side-numbers">@consecutive</span>
+                    }
+                }
+            </td>
+            @for (var column = 0; column < Model.Field.ColumnCount; column++)
+            {
+                var tile = Model.Field.GetTile(row, column);
+
+                <td>
+                    <a href="/Nonogram/ActionOnTile?row=@row&column=@column">
+                        @if (tile.State == TileState.Plain)
+                        {
+                            <img src="/images/plain.jpg" alt="Plain" class="tile-images"/>
+                        }
+                        else if (tile.State == TileState.Excluded)
+                        {
+                            <img src="/images/cross.png" alt="Excluded" class="tile-images"/>
+                        }
+                        else
+                        {
+                            <img src="/images/colored.png" alt="Colored" class="tile-images"/>
+                        }
+                    </a>
+                </td>
+            }
+        </tr>
+    }
+</table>
+<br>
+<br>
+<br>
+
+<h2 class="center-entity-headings">Scores</h2>
+<ol class="scores-list">
+    @foreach (var score in @Model.Scores)
+    {
+        <div class="scores">
+            <li>@score.Player @score.Points</li>
+        </div>
+    }
+</ol>
+
+
+<h2 class="center-entity-headings">Latest Comments</h2>
+<dl>
+    @foreach (var comment in @Model.Comments)
+    {
+        <dt class="player-comment-name">@comment.Player</dt>
+        <dd>@comment.CommentContent</dd>
+    }
+</dl>
+<br>
+<form action="/Nonogram/AddComment" method="post">
+    Write your comment: <input type="text" name="comment"/> <br/>
+    <button type="submit" class="button-send"> Send Comment</button>
+</form>
+
+
+
+
+<h2 class="center-entity-headings"> Ratings </h2>
+<br>
+
+<ul class="scores-list">
+    @foreach (var rating in @Model.Ratings)
+    {
+        <div class="scores">
+            <li>@rating.Player  @rating.RatingValue</li>
+        </div>
+    }
+</ul>
+
+<form action="/Nonogram/AddRating" method="post">
+    Add rating (1-5) <input type="number" name="rating" /> <br />
+    <button type="submit" class="button-send"> Send rating</button>
+</form>
